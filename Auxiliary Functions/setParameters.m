@@ -11,7 +11,7 @@ global bbeta ssigma aaBar aalpha ddelta vEpsilonGrid mEpsilonTransition vEpsilon
 	
 % Preferences
 bbeta = .96;										% discount factor (annual calibration)
-ssigma = 1;											% coefficient of relative risk aversion
+ssigma = 2;											% coefficient of relative risk aversion
 aaBar = 0;											% borrowing constraint
 
 % Technology

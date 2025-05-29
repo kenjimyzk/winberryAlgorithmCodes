@@ -1,13 +1,14 @@
-% Sets parameter values 
+% Sets parameter values - Updated for Dynare 5.x/6.x compatibility
 %
 % Thomas Winberry, July 26th, 2016
+% Updated for Dynare 5.x/6.x compatibility
 
 %----------------------------------------------------------------
 % Set economic parameters 
 %----------------------------------------------------------------
 
 global bbeta ssigma aaBar aalpha ddelta vEpsilonGrid mEpsilonTransition vEpsilonInvariant aggEmployment ...
-	mmu ttau rrhoTFP ssigmaTFP
+	mmu ttau rrhoTFP ssigmaTFP r w
 	
 % Preferences
 bbeta = .96;										% discount factor (annual calibration)
@@ -18,7 +19,7 @@ aaBar = 0;											% borrowing constraint
 aalpha = .36;										% capital share
 ddelta = .1;										% depreciation rate (annual calibration)
 
-% Idioynscratic Shocks
+% Idiosyncratic Shocks
 vEpsilonGrid = [0;1];
 aggEmployment = .93; uDuration = 1;
 mEpsilonTransition = [uDuration / (1 + uDuration), 1 - (uDuration / (1 + uDuration));...
@@ -71,3 +72,29 @@ nMeasureCoefficients = nEpsilon * nMeasure;
 maxIterations = 2e4;
 tolerance = 1e-5;
 dampening = .95;
+
+%----------------------------------------------------------------
+% Version compatibility check
+%----------------------------------------------------------------
+
+% Check if we're running on Octave or MATLAB
+if exist('OCTAVE_VERSION', 'builtin')
+    fprintf('Running on Octave\n');
+else
+    fprintf('Running on MATLAB\n');
+end
+
+% Try to check Dynare version
+try
+    if exist('dynare_version', 'file')
+        dyn_ver = dynare_version();
+        fprintf('Dynare version detected: %s.%s\n', dyn_ver.major, dyn_ver.minor);
+        if str2double(dyn_ver.major) < 5
+            warning('This code is optimized for Dynare 5.0 or later. Some features may not work correctly.');
+        end
+    else
+        fprintf('Dynare version could not be determined.\n');
+    end
+catch
+    fprintf('Dynare version check failed - proceeding anyway.\n');
+end

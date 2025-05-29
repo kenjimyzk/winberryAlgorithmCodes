@@ -2,6 +2,7 @@ function [residual,mHistogramOptional,mAssetsPrimeOptional,mConsumptionOptional]
 
 % Computes residual of market-clearing condition, using histogram approximation of distribution
 % as in Young (2010); used to compute initial guess for parametric family
+% Updated for Dynare 5.x/6.x compatibility
 % 
 % Inputs
 %   (1) capital: candidate aggregate capital stock
@@ -13,6 +14,7 @@ function [residual,mHistogramOptional,mAssetsPrimeOptional,mConsumptionOptional]
 %   (4) (optional) mConsumptionOptional: mConsumption
 % 
 % Thomas Winberry, July 26th, 2016
+% Updated for Dynare 5.x/6.x compatibility
 
 % Declare global variables
 global bbeta ssigma aalpha ddelta eepsilonBar rrhoEpsilon ssigmaEpsilon aaBar aggEmployment mmu ttau mEpsilonTransition vEpsilonGrid ...
@@ -21,7 +23,7 @@ global bbeta ssigma aalpha ddelta eepsilonBar rrhoEpsilon ssigmaEpsilon aaBar ag
 	vAssetsPoly vAssetsPolySquared mAssetsPolyHistogram w r mEpsilonPrimeGrid maxIterations tolerance dampening vAssetsPolyFine vAssetsGridFine ...
 	mEpsilonGridFine mAssetsGridFine nAssetsFine nStateFine splineOpt
 	
-% Compute prices
+% Compute prices from current capital guess
 r = aalpha * (capital ^ (aalpha - 1)) * (aggEmployment ^ (1 - aalpha)) - ddelta;
 w = (capital ^ aalpha) * (1 - aalpha) * (aggEmployment ^ (-aalpha));
 

@@ -2,6 +2,7 @@ function [residual,mCoefficientsOptional,mParametersOptional,mMomentsOptional,mH
 	computeMCResidualPolynomials(capital,mMoments,aGridMoments,mHat)
 
 % Computes residual of market-clearing condition, parametric family to approximate distribution
+% Updated for Dynare 5.x/6.x compatibility
 % 
 % Inputs
 %   (1) capital: candidate aggregate capital stock
@@ -18,6 +19,7 @@ function [residual,mCoefficientsOptional,mParametersOptional,mMomentsOptional,mH
 %	(5) (optional) mHatOptional: mass at borrowing constraint
 % 
 % Thomas Winberry, July 26th, 2016
+% Updated for Dynare 5.x/6.x compatibility
 
 % Declare global variables
 global bbeta ssigma aalpha ddelta eepsilonBar rrhoEpsilon ssigmaEpsilon aaBar aggEmployment mmu ttau mEpsilonTransition vEpsilonGrid ...
@@ -150,12 +152,17 @@ end
 
 % Initialize iteration
 err = 100; iteration = 1; 
-options = optimoptions(@fminunc,'Algorithm','quasi-newton','Display','notify-detailed',...
-	'MaxFunEvals',50000,'TolFun',1e-12,'GradObj','on','MaxIter',1000);
-%{ For older versions of MATLAB:
-options = optimset('LargeScale','off','Display','notify-detailed',...
-	'MaxFunEvals',50000,'TolFun',1e-12,'GradObj','on','MaxIter',1000);
-%}
+
+% Set optimization options for different MATLAB versions
+if exist('optimoptions', 'file') == 2
+    % Modern MATLAB (R2013a and later)
+    options = optimoptions(@fminunc,'Algorithm','quasi-newton','Display','notify-detailed',...
+        'MaxFunctionEvaluations',50000,'FunctionTolerance',1e-12,'SpecifyObjectiveGradient',true,'MaxIterations',1000);
+else
+    % Older MATLAB versions
+    options = optimset('LargeScale','off','Display','notify-detailed',...
+        'MaxFunEvals',50000,'TolFun',1e-12,'GradObj','on','MaxIter',1000);
+end
 
 % Iteration
 while err > err2 && iteration <= tol2

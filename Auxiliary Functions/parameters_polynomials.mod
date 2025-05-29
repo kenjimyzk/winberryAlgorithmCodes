@@ -1,6 +1,8 @@
 // Declare parameters and load in their values for firstOrderDynamics_polynomials.mod
+// Updated for Dynare 5.x/6.x compatibility
 //
 // Thomas Winberry, July 26th, 2016
+// Updated for Dynare 5.x/6.x compatibility
 
 //----------------------------------------------------------------
 // Preliminaries
@@ -18,7 +20,7 @@ parameters bbeta ssigma aaBar aalpha ddelta aggEmployment
 //Load in their values
 @#define nEconomicParameters = 10
 for iParam = 1 : @{nEconomicParameters}
-	parameterName = M_.param_names{iParam,:};
+	parameterName = deblank(M_.param_names{iParam,:});
 	if isfield(economicParameters,parameterName)
 		M_.params(iParam) = eval(['economicParameters.' parameterName]);
 	end
@@ -37,7 +39,7 @@ for iEpsilon = 1 : 2
 	end
 end
 
-// Mass of invariant distrbution of idiosyncratic shocks
+// Mass of invariant distribution of idiosyncratic shocks
 parameters epsilonMass_1 epsilonMass_2;
 epsilonMass_1 = 1 - aggEmployment;
 epsilonMass_2 = aggEmployment;
@@ -48,7 +50,7 @@ parameters nEpsilon nAssets nState assetsMin assetsMax nAssetsFine nStateFine nA
 // Load in their values
 @#define nApproximationParameters = 15
 for iParam = 1 : @{nApproximationParameters}
-	parameterName = M_.param_names{@{nEconomicParameters} + 6 + iParam,:};
+	parameterName = deblank(M_.param_names{@{nEconomicParameters} + 6 + iParam,:});
 	if isfield(approximationParameters,parameterName)
 		M_.params(@{nEconomicParameters} + 6 + iParam) = eval(['approximationParameters.' parameterName]);
 	end
@@ -65,15 +67,11 @@ end
 @#define nState = nEpsilon * nAssets
 @#define nStateQuadrature = nEpsilon * nAssetsQuadrature
 
-//
 //----------------------------------------------------------------
 // Grids for approximating conditional expectation
 //----------------------------------------------------------------
 
-// 
 // Employment
-//
-
 // Define the grids
 parameters epsilonGrid_1 epsilonGrid_2;
 
@@ -83,10 +81,7 @@ epsilonGrid_2 = 1;
 
 @#define nCounter = nCounter + 2
 
-//
 // Assets
-//
-
 // Define the grids
 @#for iAssets in 1 : nAssets
 	parameters assetsGrid_@{iAssets};
@@ -122,10 +117,7 @@ end
 // Conditional expectation polynomials
 //----------------------------------------------------------------
 
-//
 // Chebyshev polynomials
-//
-
 // Define the parameters
 @#for iAssets in 1 : nAssets
 	@#for iPower in 1 : nAssets
@@ -142,10 +134,7 @@ end
 
 @#define nCounter = nCounter + nAssets * nAssets
 
-// 
 // Squared terms in Chebyshev interpolation
-//
-
 // Define the parameters
 @#for iAssets in 1 : nAssets
 	parameters expectationPolySquared_@{iAssets};
